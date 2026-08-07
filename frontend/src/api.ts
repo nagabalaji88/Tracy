@@ -213,6 +213,11 @@ export interface Attribution {
   use_case: string
   window: { from: string; to: string; days: number }
   total_spend_usd: number
+  model_spend_usd: number
+  rework_usd: number
+  rework_hours: number
+  grand_total_usd: number
+  rework_multiple_of_model_spend: number | null
   by_team: RollupRow[]
   by_use_case: RollupRow[]
   by_stage: RollupRow[]
@@ -240,6 +245,7 @@ export interface Attribution {
 export interface StageEconomics {
   use_case: string
   baseline_config_id: string
+  baseline_cost_per_successful_outcome_usd: number | null
   stages: {
     stage: string
     spend_usd: number
@@ -258,11 +264,11 @@ export interface StageEconomics {
 export interface HeavyTail {
   use_case: string
   n_documents: number
-  percentiles_usd: Record<string, number>
+  percentiles_usd: Record<'p50' | 'p75' | 'p90' | 'p95' | 'p99' | 'max' | 'mean', number>
   top_5pct_share_of_spend: number
   top_1pct_share_of_spend: number
   ratio_p99_p50: number
-  histogram: { bucket_usd_lo: number; bucket_usd_hi: number; documents: number }[]
+  histogram: { bucket_usd_lo: number; bucket_usd_hi: number; documents: number; overflow: boolean }[]
   worst: { doc_id: string; cost_usd: number; doc_tier: string | null; succeeded: boolean | null }[]
   by_tier: { tier: string; documents: number; mean_usd: number; p95_usd: number; share_pct: number }[]
 }

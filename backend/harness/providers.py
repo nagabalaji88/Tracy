@@ -85,6 +85,9 @@ REWORK_BASE_MIN = 2.5
 REWORK_PER_MISSED_CLAUSE = 1.15
 REWORK_TRUNCATION_MIN = 21.0
 REWORK_PER_HALLUCINATION = 3.2
+NO_SYNTHESIS_REWORK_MIN = 18.0
+REWORK_PER_BAD_CITATION = 1.6
+NO_RISK_CITATION_FACTOR = 0.62
 
 
 class RunProvider(Protocol):
@@ -228,6 +231,10 @@ class DeterministicProvider:
         checked = max(5, int(doc.clause_count * 0.4))
         cite_skill = EXTRACT_SKILL[risk_model or extract_model]
         correct = int(round(checked * min(1.0, cite_skill * (0.93 + 0.07 * coverage))))
+        if "risk_assess" not in stages:
+            # Citations are verified against the risk rubric. Drop the stage and
+            # nothing checks them.
+            correct = int(round(correct * NO_RISK_CITATION_FACTOR))
 
         missed = doc.clause_count - n_found
         rework = (
@@ -235,6 +242,12 @@ class DeterministicProvider:
             + REWORK_PER_MISSED_CLAUSE * missed
             + (REWORK_TRUNCATION_MIN if truncated else 0.0)
             + REWORK_PER_HALLUCINATION * n_hall
+            # No synthesis stage means the analyst writes the review memo by hand.
+            # The model spend goes down; the cost of the work goes up.
+            + (NO_SYNTHESIS_REWORK_MIN if "synthesize" not in stages else 0.0)
+            # Every citation that does not hold up has to be chased back to the
+            # source document by hand.
+            + REWORK_PER_BAD_CITATION * (checked - correct)
         ) * (0.85 + 0.3 * _u(f"{seed_key}/rework"))
 
         return {

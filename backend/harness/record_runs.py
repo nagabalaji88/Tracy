@@ -30,6 +30,7 @@ from app.adapters import get_cost_meter, get_scorer
 from harness.golden_set import GOLDEN_SET, GoldenDoc, _jitter
 from harness.providers import _fingerprint, _u, get_provider
 from harness.workload import (
+    OPTIMISED,
     BASELINE,
     CONFIG_BY_ID,
     EVAL_CONFIGS,
@@ -44,6 +45,10 @@ PRODUCTION_DAYS = 45
 
 TENANTS = ("acme-legal", "globex-corp")
 TEAMS = ("legal-ops", "procurement", "risk-review")
+
+# The promoted configuration is live on one team from this day forward.
+CANARY_TEAM = "legal-ops"
+CANARY_FROM_DAY = 37
 
 
 def _iso(dt: datetime) -> str:
@@ -143,7 +148,7 @@ def _production_docs(day: int) -> list[GoldenDoc]:
     # A second tenant onboards over the final fortnight. Volume is a driver in
     # its own right — Module 3 projects it separately rather than fitting a
     # trend line through the blended aggregate.
-    ramp = 1.0 + 2.1 * max(0.0, min(1.0, (day - 32) / 12.0))
+    ramp = 1.0 + 2.6 * max(0.0, min(1.0, (day - 32) / 12.0))
     volume = max(3, int(base * growth * ramp * (0.80 + 0.40 * _u(f"vol/{day}"))))
     docs: list[GoldenDoc] = []
     for i in range(volume):
@@ -341,8 +346,17 @@ def record(provider_kind: str = "deterministic") -> dict[str, int]:
         # Spread the day's traffic across a 14-hour working window.
         spacing = (14 * 60) / max(1, len(docs_today))
         for i, doc in enumerate(docs_today):
+            # The optimised config was promoted and is running as a canary on one
+            # team from the last prompt deploy onward. This is what a realised
+            # saving looks like in the trace table — and the only reason there are
+            # any cache reads in production to attribute.
+            live_config = (
+                OPTIMISED
+                if day >= CANARY_FROM_DAY and _assign(doc.doc_id + "team", TEAMS) == CANARY_TEAM
+                else BASELINE
+            )
             rows, outcome = _materialise(
-                doc=doc, config=BASELINE, environment="production",
+                doc=doc, config=live_config, environment="production",
                 prompt_version=prompt_version,
                 started=day_start.replace(hour=7, minute=0) + timedelta(minutes=spacing * i),
                 provider=provider,

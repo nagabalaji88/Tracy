@@ -11,7 +11,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import measurement
+from app.routers import attribution, measurement
 
 app = FastAPI(
     title="AI Cost-Quality Control Plane",
@@ -31,6 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(measurement.router)
+app.include_router(attribution.router)
 
 
 @app.get("/api/v1/health")
