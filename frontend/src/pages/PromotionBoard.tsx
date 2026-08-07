@@ -56,13 +56,24 @@ export function PromotionBoard() {
   const promoted = data.candidates.find((c) => c.decision.decision === 'PROMOTE')
   const floorMetrics = Object.keys(data.policy.quality_floor)
 
+  // Human-readable metric names come from policy, carried on the decision
+  // records. The baseline column has no decision of its own, so collect them
+  // once here rather than letting that column fall back to raw metric keys.
+  const metricLabels: Record<string, string> = {}
+  for (const c of data.candidates) {
+    for (const f of [...c.decision.failed_floors, ...c.decision.passed_floors]) {
+      metricLabels[f.metric] = f.label
+    }
+  }
+
   return (
     <div className="space-y-6">
       <Verdict board={data} />
 
       <div className="grid gap-4 lg:grid-cols-3">
         {columns.map((col, i) => (
-          <ConfigColumn key={col.key} col={col} index={i} floorMetrics={floorMetrics} />
+          <ConfigColumn key={col.key} col={col} index={i} floorMetrics={floorMetrics}
+            metricLabels={metricLabels} />
         ))}
       </div>
 
@@ -170,8 +181,8 @@ function CpsoRow({ label, value, tone, note }: {
   )
 }
 
-function ConfigColumn({ col, index, floorMetrics }: {
-  col: Column; index: number; floorMetrics: string[]
+function ConfigColumn({ col, index, floorMetrics, metricLabels }: {
+  col: Column; index: number; floorMetrics: string[]; metricLabels: Record<string, string>
 }) {
   const d = col.decision
   const tone = d === null ? 'neutral' : d.decision === 'PROMOTE' ? 'pass' : 'fail'
@@ -229,7 +240,7 @@ function ConfigColumn({ col, index, floorMetrics }: {
           const value = col.measured.quality[metric]
           return (
             <div key={metric} className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">{record?.label ?? metric}</span>
+              <span className="text-slate-600">{record?.label ?? metricLabels[metric] ?? metric}</span>
               <span className="flex items-center gap-2">
                 <span className="tabular font-medium"
                   style={{ color: failed ? 'var(--fail)' : 'var(--ink)' }}>
@@ -389,9 +400,9 @@ function PairedEvidence({ board }: { board: Board }) {
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b hairline">
-              {['Candidate', 'Metric', 'Baseline', 'Candidate', 'Δ', '95% CI', 'Sign test p', 'Verdict']
+              {['Candidate', 'Metric', 'Baseline', 'Candidate value', 'Δ', '95% CI', 'Sign test p', 'Verdict']
                 .map((h, i) => (
-                  <th key={h} className={`pb-2 text-[11px] font-semibold uppercase tracking-[0.07em] text-slate-500 ${i < 2 ? 'text-left' : 'text-right'}`}>
+                  <th key={i} className={`pb-2 text-[11px] font-semibold uppercase tracking-[0.07em] text-slate-500 ${i < 2 ? 'text-left' : 'text-right'}`}>
                     {h}
                   </th>
                 ))}

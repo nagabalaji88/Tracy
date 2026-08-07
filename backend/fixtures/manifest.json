@@ -1,6 +1,6 @@
 {
   "provider": "deterministic/v1",
-  "recorded_at": "2026-08-07T17:07:08+00:00",
+  "recorded_at": "2026-08-07T17:14:00+00:00",
   "reference_date": "2026-08-07T00:00:00+00:00",
   "golden_set_size": 24,
   "eval_configs": [
@@ -12,7 +12,7 @@
     "ablate_synthesize"
   ],
   "production_days": 45,
-  "n_spans": 9289,
+  "n_spans": 9245,
   "n_outcomes": 2369,
   "note": "Produced by the recording harness. The measurement core reads these rows and cannot distinguish which provider wrote them."
 }

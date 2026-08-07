@@ -225,7 +225,7 @@ def replay(
             "monthly_cap_comment": (
                 f"At this trace's burn rate of ${burn_rate:.2f}/min, the entire "
                 f"${monthly_cap_usd:.0f} monthly budget goes in "
-                f"{monthly_cap_usd / burn_rate:.0f} minutes. A monthly cap is a level "
+                f"{monthly_cap_usd / burn_rate:.1f} minutes. A monthly cap is a level "
                 "control; this needs a derivative control."
                 if burn_rate > 0 else "Trace has no measurable duration."
             ),

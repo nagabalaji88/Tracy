@@ -36,6 +36,26 @@ class ContractAnalysisScorer:
         if not gold:
             raise ValueError(f"run {run.get('doc_id')!r} has an empty gold clause set")
 
+        # A run the pipeline abandoned. It still cost money and it still cost
+        # analyst time, so it is an outcome — an unsuccessful one — not a gap in
+        # the data to be dropped.
+        #
+        # Its quality scores are EMPTY rather than zero. The run produced no
+        # output, so its clause recall was not measured; recording it as 0.0
+        # would fold an availability failure into a quality metric, and on a
+        # 24-document golden set a single crash would move the mean by four
+        # points and fail a floor the extraction never touched. Availability
+        # belongs in the success rate, and the success rate is what cost per
+        # successful outcome divides by — so the failure is fully charged for,
+        # in the right place.
+        if art.get("terminal_failure"):
+            return {
+                "quality_scores": {},
+                "succeeded": False,
+                "failure_reason": art["terminal_failure"],
+                "human_rework_minutes": float(art["human_rework_minutes"]),
+            }
+
         recall = len(gold & pred) / len(gold)
         hallucinated = len(pred - gold)
         truncated = any(r == "length" for r in art["stage_finish_reasons"])

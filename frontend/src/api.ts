@@ -478,6 +478,8 @@ export interface Executive {
   kpis: {
     cost_per_successful_outcome_usd: number | null
     cost_per_call_usd: number
+    cost_per_document_usd: number | null
+    documents: number
     total_spend_usd: number
     savings_realised_usd: number
     savings_rejected_usd: number
@@ -487,6 +489,15 @@ export interface Executive {
   }
   active_rung: { at_pct: number; action: string } | null
   budget: { budget_usd: number; spend_to_date_usd: number; pct_of_budget: number }
-  decisions: { config_id: string; label: string; decision: string; headline: string; cost_delta_pct: number; annualised_usd: number }[]
+  decisions: {
+    config_id: string
+    label: string
+    decision: string
+    headline: string
+    cost_delta_pct: number
+    annualised_usd: number
+    failed_floor: FloorRecord | null
+  }[]
+  basis: { monthly_documents: number; annualisation: string }
   provenance: Record<string, unknown>
 }

@@ -255,10 +255,12 @@ function StageEconomicsCard({ data }: { data: StageEconomics }) {
 }
 
 function HeavyTailCard({ data }: { data: HeavyTail }) {
+  // `overflow` is deliberately not a field on the chart data: Recharts forwards
+  // data keys onto the rendered element, and `overflow` is a real SVG attribute.
+  const overflowIndex = data.histogram.findIndex((h) => h.overflow)
   const bars = data.histogram.map((h) => ({
     label: h.overflow ? `> ${usd(h.bucket_usd_lo, 2)}` : usd(h.bucket_usd_lo, 2),
     documents: h.documents,
-    overflow: h.overflow,
   }))
   return (
     <Card>
@@ -276,8 +278,8 @@ function HeavyTailCard({ data }: { data: HeavyTail }) {
               <Tooltip cursor={{ fill: '#0f172a08' }}
                 contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
               <Bar dataKey="documents" radius={[4, 4, 0, 0]}>
-                {bars.map((b, i) => (
-                  <Cell key={i} fill={b.overflow ? 'var(--fail)' : 'var(--accent)'} />
+                {bars.map((_, i) => (
+                  <Cell key={i} fill={i === overflowIndex ? 'var(--fail)' : 'var(--accent)'} />
                 ))}
               </Bar>
             </BarChart>

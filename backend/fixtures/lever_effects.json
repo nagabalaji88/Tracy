@@ -46,13 +46,14 @@
           "measured_cost_per_document_usd": 0.671297
         },
         "small-fast": {
-          "cost": 0.656082,
+          "cost": 0.645493,
           "latency": 0.881409,
           "quality": {
-            "clause_recall": -0.183854,
-            "hallucinated_clauses": 2.625
+            "citation_accuracy": -3.4e-05,
+            "clause_recall": -0.183169,
+            "hallucinated_clauses": 2.764493
           },
-          "measured_cost_per_document_usd": 0.440426
+          "measured_cost_per_document_usd": 0.433317
         }
       }
     },

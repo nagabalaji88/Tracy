@@ -87,6 +87,10 @@ REWORK_TRUNCATION_MIN = 21.0
 REWORK_PER_HALLUCINATION = 3.2
 NO_SYNTHESIS_REWORK_MIN = 18.0
 REWORK_PER_BAD_CITATION = 1.6
+# Share of retried runs that fail again and are abandoned. The analyst then does
+# the whole document by hand.
+TERMINAL_FAILURE_SHARE = 0.30
+REWORK_TERMINAL_FAILURE_MIN = 42.0
 NO_RISK_CITATION_FACTOR = 0.62
 
 
@@ -162,16 +166,37 @@ class DeterministicProvider:
         ))
         finish_reasons.append("stop")
 
-        # structured-output failure -> one retry, charged as retry spend
+        # structured-output failure -> retries, charged as retry spend. A fraction
+        # of those retries fail again and the run is abandoned: the pipeline spent
+        # money and produced nothing, which is the cheapest way to have a very
+        # expensive successful outcome.
         p_retry = RETRY_BASE[extract_model] + 0.12 * doc.structure_penalty
-        n_retries = 1 if _u(f"{seed_key}/retry") < p_retry else 0
+        retried = _u(f"{seed_key}/retry") < p_retry
+        terminal_failure = retried and _u(f"{seed_key}/retry2") < TERMINAL_FAILURE_SHARE
+        n_retries = (2 if terminal_failure else 1) if retried else 0
         for r in range(1, n_retries + 1):
             spans.append(self._span(
                 stage="clause_extract", config=config, doc=doc,
                 input_fresh=fresh, input_cached=cached,
-                output=int(extract_output * 0.6), reasoning=0, finish_reason="stop",
+                output=int(extract_output * 0.6), reasoning=0,
+                finish_reason="content_filter" if (terminal_failure and r == n_retries) else "stop",
                 cost_bucket="retry", retry_index=r, depth=1,
             ))
+        if terminal_failure:
+            # The run stops here. Downstream stages never execute.
+            return {
+                "spans": spans,
+                "artifacts": {
+                    "gold_clause_ids": list(doc.gold_clause_ids),
+                    "predicted_clause_ids": [],
+                    "stage_finish_reasons": finish_reasons + ["content_filter"],
+                    "citations_checked": max(5, int(doc.clause_count * 0.4)),
+                    "citations_correct": 0,
+                    "terminal_failure": "structured_output_failure_after_retries",
+                    "human_rework_minutes": round(
+                        REWORK_TERMINAL_FAILURE_MIN * (0.85 + 0.3 * _u(f"{seed_key}/rework")), 2),
+                },
+            }
 
         # --- stage: risk_assess ------------------------------------------------
         risk_model = config.model_by_stage.get("risk_assess")
