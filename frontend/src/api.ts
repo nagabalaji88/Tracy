@@ -280,17 +280,34 @@ export interface Forecast {
     label: string
     unit: string
     current: number
+    mean: number
     p50: number
     p95: number
+    sigma: number
+    n: number
     method: string
     note: string
   }[]
-  history: { date: string; spend_usd: number; documents: number; prompt_version: string }[]
+  history: {
+    date: string
+    spend_usd: number
+    documents: number
+    calls: number
+    retries: number
+    tokens_per_call: number
+    retry_factor: number
+    fan_out: number
+    cost_per_document_usd: number
+    prompt_version: string
+  }[]
   change_points: { date: string; prompt_version: string; day_index: number; spend_before: number; spend_after: number; pct_change: number | null }[]
   projection: { date: string; p50_usd: number; p95_usd: number; cumulative_p50_usd: number; cumulative_p95_usd: number }[]
   month: {
     month: string
     spend_to_date_usd: number
+    ongoing_spend_usd: number
+    incident_spend_usd: number
+    includes_incidents: boolean
     days_elapsed: number
     days_remaining: number
     projected_p50_usd: number
@@ -301,6 +318,16 @@ export interface Forecast {
     p95_pct_of_budget: number
   }
   regime: { since: string; prompt_version: string; days_in_regime: number; note: string }
+  horizon: { days: number; p50_usd: number; p95_usd: number; tail_reserve_usd: number }
+  incidents: {
+    n_traces: number
+    trace_ids: string[]
+    spend_usd: number
+    threshold_usd: number
+    note: string
+  }
+  excluded_from_drivers: { batch_spend_usd: number; note: string }
+  today: string
   simulations: number
 }
 
@@ -310,7 +337,14 @@ export interface Governor {
   spend_to_date_usd: number
   pct_of_budget: number
   active_rung: { at_pct: number; action: string; description: string } | null
-  next_rung: { at_pct: number; action: string; description: string; usd_until: number; projected_date: string | null } | null
+  next_rung: {
+    at_pct: number
+    action: string
+    description: string
+    threshold_usd: number
+    usd_until: number
+    projected_date: string | null
+  } | null
   ladder: { at_pct: number; action: string; description: string; threshold_usd: number; state: string }[]
   projected_end_of_month: { p50_usd: number; p95_usd: number; p50_rung: number | null; p95_rung: number | null }
 }
