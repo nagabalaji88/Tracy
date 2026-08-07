@@ -17,7 +17,7 @@ type LeverValue = string | number | boolean
 
 export function Simulator() {
   const useCase = useApp((s) => s.useCase)
-  const cat = useResource<LeverCatalogue>(() => api.levers(), [useCase])
+  const cat = useResource<LeverCatalogue>(() => api.levers(useCase), [useCase])
   const [chosen, setChosen] = useState<Record<string, LeverValue>>({})
   const [sim, setSim] = useState<Simulation | null>(null)
   const [simError, setSimError] = useState<unknown>(null)

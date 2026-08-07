@@ -13,7 +13,19 @@ FIXTURES_DIR = BACKEND_DIR / "fixtures"
 
 
 def connect(db_path: Path | None = None) -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path or DB_PATH)
+    """
+    One connection per request.
+
+    `check_same_thread=False` is required, not optional: FastAPI runs sync
+    endpoints in a threadpool, and a dependency generator can create the
+    connection on one worker thread while the endpoint body and the generator's
+    finalizer run on others. Without it, any page that fires two requests at once
+    fails with "SQLite objects created in a thread can only be used in that same
+    thread" — which serial curl testing will never reproduce.
+
+    Sharing a connection between requests would be unsafe; nothing here does.
+    """
+    conn = sqlite3.connect(db_path or DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn

@@ -44,12 +44,14 @@ export const api = {
     req<Forecast>(`/forecast?use_case=${useCase}`),
   governor: (useCase = 'contract_analysis') =>
     req<Governor>(`/forecast/governor?use_case=${useCase}`),
-  levers: () => req<LeverCatalogue>('/simulate/levers'),
+  levers: (useCase = 'contract_analysis') =>
+    req<LeverCatalogue>(`/simulate/levers?use_case=${useCase}`),
   simulate: (body: SimulateRequest) =>
     req<Simulation>('/simulate', { method: 'POST', body: JSON.stringify(body) }),
   breakerReplay: (useCase = 'contract_analysis') =>
     req<BreakerReplay>(`/breakers/replay?use_case=${useCase}`),
-  executive: () => req<Executive>('/executive'),
+  executive: (useCase = 'contract_analysis') =>
+    req<Executive>(`/executive?use_case=${useCase}`),
   reset: () => req<{ status: string; rows: Record<string, number> }>(
     '/admin/reset', { method: 'POST' }),
 }

@@ -1,5 +1,8 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { api, type Spine } from './api'
+import { useResource } from './useResource'
+import { useApp } from './store'
 
 const NAV = [
   { to: '/', label: 'Overview', tag: 'M6' },
@@ -10,6 +13,34 @@ const NAV = [
   { to: '/breakers', label: 'Circuit breakers', tag: 'M5' },
   { to: '/framework', label: 'Framework', tag: '' },
 ]
+
+/**
+ * Which workload is being governed. The list comes from policy.yaml, so an
+ * onboarded agent appears here without a frontend change — including ATLAS,
+ * which this application did not build.
+ */
+function UseCasePicker() {
+  const useCase = useApp((s) => s.useCase)
+  const setUseCase = useApp((s) => s.setUseCase)
+  const { data } = useResource<Spine>(() => api.spine(), [])
+  const names = data ? Object.keys(data.policy.use_cases) : [useCase]
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-slate-400">
+        workload
+      </span>
+      <select
+        value={useCase}
+        onChange={(e) => setUseCase(e.target.value)}
+        className="rounded-lg border border-slate-200 bg-white/70 px-2 py-1 text-[12px] text-slate-700"
+      >
+        {names.map((n) => (
+          <option key={n} value={n}>{data?.policy.use_cases[n]?.label ?? n}</option>
+        ))}
+      </select>
+    </div>
+  )
+}
 
 export function Layout() {
   const location = useLocation()
@@ -23,6 +54,7 @@ export function Layout() {
               minimize cost s.t. quality ≥ floor ∧ latency ≤ ceiling
             </code>
           </div>
+          <UseCasePicker />
           <nav className="flex flex-wrap items-center gap-1">
             {NAV.map((item) => (
               <NavLink

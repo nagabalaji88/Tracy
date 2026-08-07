@@ -14,7 +14,7 @@ import { pct, usd } from '../format'
 
 export function Overview() {
   const useCase = useApp((s) => s.useCase)
-  const { data, error, loading, reload } = useResource<Executive>(() => api.executive(), [useCase])
+  const { data, error, loading, reload } = useResource<Executive>(() => api.executive(useCase), [useCase])
 
   if (loading) return <Loading what="production outcomes" />
   if (error) return <ErrorBox error={error} />

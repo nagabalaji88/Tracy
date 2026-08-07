@@ -45,14 +45,19 @@ def seed_from_fixtures(conn: sqlite3.Connection, fixtures_dir: Path | None = Non
         )
 
     init_schema(conn)
-    conn.execute("DELETE FROM traces")
-    conn.execute("DELETE FROM outcomes")
-    conn.execute("DELETE FROM configs")
 
     traces = json.loads((fixtures_dir / "traces.json").read_text())
     outcomes = json.loads((fixtures_dir / "outcomes.json").read_text())
     configs = json.loads((fixtures_dir / "configs.json").read_text())
     runaway = json.loads((fixtures_dir / "runaway_trace.json").read_text())
+
+    # Clear only the use cases these fixtures own. Data ingested from an external
+    # agent lives in the same tables and is not ours to delete — resetting the
+    # demo must not silently destroy a workload that was handed to us.
+    owned = sorted({row["use_case"] for row in traces} | {row["use_case"] for row in configs})
+    placeholders = ", ".join("?" for _ in owned)
+    for table in ("traces", "outcomes", "configs"):
+        conn.execute(f"DELETE FROM {table} WHERE use_case IN ({placeholders})", owned)
 
     n_t = _insert_many(conn, "traces", TRACE_COLUMNS, traces)
     n_t += _insert_many(conn, "traces", TRACE_COLUMNS, runaway["spans"])
@@ -87,8 +92,17 @@ def upsert_configs(conn: sqlite3.Connection, rows: list[dict]) -> int:
 
 
 def ensure_seeded(conn: sqlite3.Connection) -> None:
+    """
+    Seed the fixture-owned workloads if they are absent.
+
+    Checks for the fixtures' own use cases rather than for an empty table:
+    ingesting an external agent first would otherwise leave the store non-empty
+    and the built-in workloads silently missing.
+    """
     init_schema(conn)
-    if is_empty(conn):
+    row = conn.execute(
+        "SELECT COUNT(*) c FROM traces WHERE use_case = 'contract_analysis'").fetchone()
+    if row["c"] == 0:
         seed_from_fixtures(conn)
 
 

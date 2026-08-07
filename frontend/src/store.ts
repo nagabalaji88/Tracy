@@ -9,7 +9,14 @@ interface AppState {
   setUseCase: (useCase: string) => void
 }
 
+const KEY = 'ccp.useCase'
+
 export const useApp = create<AppState>((set) => ({
-  useCase: 'contract_analysis',
-  setUseCase: (useCase) => set({ useCase }),
+  // Survives a reload: the demo moves between two applications and a full page
+  // load should not silently drop you back onto a different workload.
+  useCase: localStorage.getItem(KEY) ?? 'contract_analysis',
+  setUseCase: (useCase) => {
+    localStorage.setItem(KEY, useCase)
+    set({ useCase })
+  },
 }))
