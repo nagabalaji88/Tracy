@@ -8,5 +8,7 @@ from app.adapters.base import (  # noqa: F401
     registered,
 )
 from app.adapters.contract_analysis import register_all
+from app.adapters.atlas import register as register_atlas
 
 register_all()
+register_atlas()

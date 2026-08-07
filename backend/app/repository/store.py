@@ -66,6 +66,26 @@ def seed_from_fixtures(conn: sqlite3.Connection, fixtures_dir: Path | None = Non
     return {"traces": n_t, "outcomes": n_o, "configs": n_c}
 
 
+def init_schema_if_needed(conn: sqlite3.Connection) -> None:
+    init_schema(conn)
+
+
+def upsert_traces(conn: sqlite3.Connection, rows: list[dict]) -> int:
+    return _insert_many(conn, "traces", TRACE_COLUMNS, rows)
+
+
+def upsert_outcomes(conn: sqlite3.Connection, rows: list[dict]) -> int:
+    return _insert_many(conn, "outcomes", OUTCOME_COLUMNS, rows)
+
+
+def upsert_configs(conn: sqlite3.Connection, rows: list[dict]) -> int:
+    return _insert_many(
+        conn, "configs",
+        ("config_id", "use_case", "label", "role", "ablated_stage", "levers", "recorded_at"),
+        rows,
+    )
+
+
 def ensure_seeded(conn: sqlite3.Connection) -> None:
     init_schema(conn)
     if is_empty(conn):
@@ -162,12 +182,29 @@ def trace_spans(conn: sqlite3.Connection, trace_id: str) -> list[dict]:
     return rows
 
 
-def find_runaway_trace_id(conn: sqlite3.Connection) -> str:
-    row = conn.execute(
-        "SELECT trace_id FROM traces WHERE doc_id = 'DOC-RUNAWAY' LIMIT 1"
-    ).fetchone()
+def find_runaway_trace_id(conn: sqlite3.Connection, use_case: str | None = None) -> str:
+    """
+    The trace worth replaying: the most expensive one on record for the use case.
+
+    Deliberately not a lookup for a known demo id. Whichever workload is loaded,
+    the breaker page opens on that workload's worst real trace — which is the
+    only version of this screen anyone would trust.
+    """
+    sql = """
+        SELECT trace_id, SUM(cost_usd) AS total
+        FROM traces
+        WHERE environment = 'production'
+        {filter}
+        GROUP BY trace_id
+        ORDER BY total DESC
+        LIMIT 1
+    """.format(filter="AND use_case = ?" if use_case else "")
+    row = conn.execute(sql, (use_case,) if use_case else ()).fetchone()
     if row is None:
-        raise DataError("the runaway trace fixture is not loaded")
+        raise DataError(
+            f"no production traces recorded{f' for {use_case}' if use_case else ''}; "
+            "there is nothing to replay"
+        )
     return row["trace_id"]
 
 
@@ -175,4 +212,5 @@ __all__ = [
     "DataError", "connect", "ensure_seeded", "seed_from_fixtures", "manifest",
     "list_configs", "spans_for_config", "outcomes_for_config", "production_spans",
     "production_outcomes", "trace_spans", "find_runaway_trace_id",
+    "init_schema_if_needed", "upsert_traces", "upsert_outcomes", "upsert_configs",
 ]

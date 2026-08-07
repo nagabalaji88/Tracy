@@ -76,8 +76,9 @@ def executive(conn: sqlite3.Connection = Conn,
     gov = guard(governor, month, policy)
 
     days = len({s["started_at"][:10] for s in prod_spans})
-    n_docs = len({s["doc_id"] for s in prod_spans if s.get("doc_id")})
-    monthly_documents = n_docs / days * 30 if days else 0
+    # One outcome is one unit of business work. Counting distinct doc_ids instead
+    # would undercount any workload that revisits the same subject.
+    monthly_documents = len(prod_outcomes) / days * 30 if days else 0
 
     result = guard(executive_summary, prod_spans, prod_outcomes, decisions,
                    monthly_documents, gov)
@@ -128,10 +129,26 @@ def framework() -> dict[str, Any]:
             ],
             "core_files_changed": 0,
             "proof": (
-                "support_triage is wired in exactly this way — a policy entry and a Scorer. "
-                "It appears in the attribution rollups alongside contract_analysis without a "
-                "single branch in any service module."
+                "ATLAS is the hard version of this claim: a seven-stage equity-research agent "
+                "built as a separate application, on its own port, with its own store, which "
+                "this package neither imports nor is imported by. Onboarding it took one "
+                "policy.yaml entry and app/adapters/atlas.py — a Scorer plus a mapping from "
+                "its debug records onto the spine. The CostMeter was reused unchanged. "
+                "support_triage is the easy version of the same proof."
             ),
+            "external_agents": [
+                {
+                    "name": "ATLAS",
+                    "use_case": "equity_research_memo",
+                    "relationship": "separate application; no shared code, no shared database",
+                    "cost_to_onboard": [
+                        "policy.yaml: 1 use_case entry + 2 metric direction declarations",
+                        "app/adapters/atlas.py: AtlasScorer + ingest_records",
+                        "app/routers/ingest.py: 1 POST route",
+                    ],
+                    "core_files_changed": 0,
+                }
+            ],
         },
         "modules": [
             {"id": 1, "name": "Measurement core & promotion engine",

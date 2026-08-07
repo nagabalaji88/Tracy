@@ -62,7 +62,25 @@ def _coerce(lever: dict[str, Any], value: Any) -> Any:
     )
 
 
+def assert_calibrated_for(base_config_id: str) -> None:
+    """
+    The lever table was measured against ONE baseline configuration. Serving it
+    for a different workload would present another agent's measured multipliers
+    as if they described this one — a projection built on the wrong measurements
+    is worse than no projection.
+    """
+    effects = load_effects()
+    calibrated = effects["baseline_config_id"]
+    if base_config_id != calibrated:
+        raise MeasurementError(
+            f"the lever table was calibrated against '{calibrated}', not '{base_config_id}'. "
+            "Run `python -m harness.calibrate_levers` against this workload before "
+            "simulating it — the simulator will not reuse another workload's multipliers."
+        )
+
+
 def catalogue(base_config_id: str, measured: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    assert_calibrated_for(base_config_id)
     effects = load_effects()
     return {
         "levers": [
@@ -93,6 +111,7 @@ def simulate(
     is always a complete configuration — which is what makes matching it against
     a recorded run meaningful.
     """
+    assert_calibrated_for(baseline["config_id"])
     registry = levers_by_id()
     chosen = baseline_lever_values()
     for lever_id, raw in lever_values.items():

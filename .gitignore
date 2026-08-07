@@ -9,3 +9,4 @@ dist/
 .vite/
 *.egg-info/
 .pytest_cache/
+agent-atlas/backend/runs/

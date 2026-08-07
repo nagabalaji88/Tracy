@@ -68,7 +68,8 @@ def levers(conn: sqlite3.Connection = Conn,
            environment: str = Query(default="eval")) -> dict[str, Any]:
     base_cfg, base, base_outcomes, configs = _baseline_pack(conn, use_case, environment)
     measured = _measured_candidates(conn, use_case, environment, configs, base, base_outcomes)
-    return catalogue(
+    return guard(
+        catalogue,
         base_cfg["config_id"],
         {
             m["config_id"]: {

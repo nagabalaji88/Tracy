@@ -36,7 +36,7 @@ def executive_summary(
         raise MeasurementError("no production outcomes; cost per successful outcome is undefined")
 
     total_spend = sum(s["cost_usd"] for s in production_spans)
-    n_docs = len({s["doc_id"] for s in production_spans if s.get("doc_id")})
+    n_docs = len({s["trace_id"] for s in production_spans})
     cpso = cost_per_successful_outcome(total_spend, production_outcomes)
 
     # Annualised at the measured production volume, so "savings" is a number
@@ -75,6 +75,7 @@ def executive_summary(
             "success_rate": cpso["success_rate"],
             "rework_hours": round(cpso["rework_minutes"] / 60, 1),
             "rework_usd": cpso["rework_usd"],
+            "work_items": n_docs,
             "documents": n_docs,
         },
         "active_rung": governor.get("active_rung"),

@@ -11,7 +11,9 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import attribution, breakers, executive, forecast, measurement, simulator
+from app.routers import (
+    attribution, breakers, executive, forecast, ingest, measurement, simulator,
+)
 
 app = FastAPI(
     title="AI Cost-Quality Control Plane",
@@ -36,6 +38,7 @@ app.include_router(forecast.router)
 app.include_router(simulator.router)
 app.include_router(breakers.router)
 app.include_router(executive.router)
+app.include_router(ingest.router)
 
 
 @app.get("/api/v1/health")

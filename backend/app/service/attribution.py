@@ -300,12 +300,16 @@ def heavy_tail(spans: Sequence[dict], outcomes: Sequence[dict]) -> dict[str, Any
     """
     if not spans:
         raise MeasurementError("no spans; the cost distribution is undefined")
+    # Grouped by TRACE, not by doc_id: one trace is one unit of work. A workload
+    # that analyses the same subject repeatedly has many work items per doc_id,
+    # and collapsing them would hide the distribution this whole view is about.
     per_doc: dict[str, float] = defaultdict(float)
+    trace_subject: dict[str, str] = {}
     for span in spans:
-        if span.get("doc_id"):
-            per_doc[span["doc_id"]] += span["cost_usd"]
+        per_doc[span["trace_id"]] += span["cost_usd"]
+        trace_subject.setdefault(span["trace_id"], span.get("doc_id") or span["trace_id"])
     if not per_doc:
-        raise MeasurementError("no spans carry a doc_id; cannot build a per-document distribution")
+        raise MeasurementError("no spans carry a trace_id; cannot build a distribution")
 
     costs = sorted(per_doc.values(), reverse=True)
     total = sum(costs)
@@ -319,12 +323,13 @@ def heavy_tail(spans: Sequence[dict], outcomes: Sequence[dict]) -> dict[str, Any
     meta = {o["doc_id"]: o for o in outcomes}
     worst = [
         {
-            "doc_id": doc_id,
+            "doc_id": trace_subject.get(trace_id, trace_id),
+            "trace_id": trace_id,
             "cost_usd": round(cost, 4),
-            "doc_tier": meta.get(doc_id, {}).get("doc_tier"),
-            "succeeded": meta.get(doc_id, {}).get("succeeded"),
+            "doc_tier": meta.get(trace_subject.get(trace_id, ""), {}).get("doc_tier"),
+            "succeeded": meta.get(trace_subject.get(trace_id, ""), {}).get("succeeded"),
         }
-        for doc_id, cost in sorted(per_doc.items(), key=lambda kv: -kv[1])[:10]
+        for trace_id, cost in sorted(per_doc.items(), key=lambda kv: -kv[1])[:10]
     ]
 
     # Linear bins over the full range are useless when the range spans three
@@ -354,8 +359,8 @@ def heavy_tail(spans: Sequence[dict], outcomes: Sequence[dict]) -> dict[str, Any
     })
 
     tier_costs: dict[str, list[float]] = defaultdict(list)
-    for doc_id, cost in per_doc.items():
-        tier = meta.get(doc_id, {}).get("doc_tier")
+    for trace_id, cost in per_doc.items():
+        tier = meta.get(trace_subject.get(trace_id, ""), {}).get("doc_tier")
         if tier:
             tier_costs[tier].append(cost)
     by_tier = [

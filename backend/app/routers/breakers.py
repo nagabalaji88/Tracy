@@ -26,7 +26,7 @@ def replay_endpoint(conn: sqlite3.Connection = Conn,
     rules are evaluated — the engine has no knowledge of which trace is the demo.
     """
     policy = guard(use_case_policy, use_case)
-    tid = trace_id or guard(store.find_runaway_trace_id, conn)
+    tid = trace_id or guard(store.find_runaway_trace_id, conn, use_case)
     spans = guard(store.trace_spans, conn, tid)
     all_prod = [s for s in guard(store.production_spans, conn, use_case)
                 if s["environment"] == "production"]
