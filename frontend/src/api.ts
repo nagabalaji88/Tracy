@@ -428,6 +428,7 @@ export interface BreakerReplay {
     model: string
     agent_depth: number
     input_tokens: number
+    output_tokens: number
     cost_usd: number
     cumulative_usd: number
     elapsed_s: number
@@ -439,16 +440,31 @@ export interface BreakerReplay {
   trip: {
     index: number
     breaker: string
+    label: string
     detail: string
     spent_usd: number
     elapsed_s: number
   } | null
+  breaker_summary: {
+    breaker: string
+    label: string
+    limit: number
+    breached: boolean
+    index?: number
+    detail?: string
+    spent_usd?: number
+    elapsed_s?: number
+    prevented_usd?: number
+    fired?: boolean
+  }[]
   counterfactual: {
     spent_usd: number
     prevented_usd: number
     total_if_unchecked_usd: number
     spans_executed: number
     spans_prevented: number
+    trace_duration_s: number
+    burn_rate_usd_per_min: number
     monthly_cap_usd: number
     monthly_cap_comment: string
     minutes_to_burn_monthly_cap: number | null

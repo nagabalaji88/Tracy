@@ -44,6 +44,10 @@ use_cases:
       max_spend_velocity_multiplier: 3.0
       max_agent_depth: 8
       max_identical_calls: 3
+      # A burn rate measured over half a second is not a burn rate. The velocity
+      # breaker stays disarmed until the trace has run this long, so a single
+      # expensive first call cannot trip it.
+      velocity_min_window_s: 45
 
   # Second use case, present to prove the onboarding claim: a policy entry plus
   # two adapter implementations, no core changes.
@@ -61,3 +65,4 @@ use_cases:
       max_spend_velocity_multiplier: 4.0
       max_agent_depth: 4
       max_identical_calls: 3
+      velocity_min_window_s: 20
