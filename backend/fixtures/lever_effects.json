@@ -1,0 +1,333 @@
+{
+  "provider": "deterministic/v1",
+  "baseline_config_id": "baseline_v1",
+  "baseline": {
+    "cost_per_document_usd": 0.671297,
+    "latency_p95_ms": 36237,
+    "quality": {
+      "citation_accuracy": 0.999212,
+      "clause_recall": 0.949604,
+      "hallucinated_clauses": 0.583333,
+      "truncation_rate": 0.0
+    }
+  },
+  "golden_set_size": 24,
+  "levers": [
+    {
+      "id": "model_tier",
+      "label": "Model tier (extraction stage)",
+      "kind": "choice",
+      "options": [
+        "premium-reasoning",
+        "workhorse",
+        "small-fast"
+      ],
+      "default": "workhorse",
+      "description": "The model doing clause extraction. The largest cost lever and the largest quality lever at once.",
+      "affects": [
+        "cost",
+        "quality",
+        "latency"
+      ],
+      "effects": {
+        "premium-reasoning": {
+          "cost": 2.953402,
+          "latency": 1.501503,
+          "quality": {
+            "clause_recall": 0.005329,
+            "hallucinated_clauses": -0.541666
+          },
+          "measured_cost_per_document_usd": 1.982609
+        },
+        "workhorse": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        },
+        "small-fast": {
+          "cost": 0.656082,
+          "latency": 0.881409,
+          "quality": {
+            "clause_recall": -0.183854,
+            "hallucinated_clauses": 2.625
+          },
+          "measured_cost_per_document_usd": 0.440426
+        }
+      }
+    },
+    {
+      "id": "risk_tier",
+      "label": "Model tier (risk assessment)",
+      "kind": "choice",
+      "options": [
+        "premium-reasoning",
+        "workhorse",
+        "small-fast"
+      ],
+      "default": "premium-reasoning",
+      "description": "Reasoning over extracted clauses. Cheap to downgrade, and it is the stage that verifies citations.",
+      "affects": [
+        "cost",
+        "quality",
+        "latency"
+      ],
+      "effects": {
+        "premium-reasoning": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        },
+        "workhorse": {
+          "cost": 0.605035,
+          "latency": 0.608182,
+          "quality": {
+            "citation_accuracy": -0.00945
+          },
+          "measured_cost_per_document_usd": 0.406158
+        },
+        "small-fast": {
+          "cost": 0.553034,
+          "latency": 0.556335,
+          "quality": {
+            "citation_accuracy": -0.198058
+          },
+          "measured_cost_per_document_usd": 0.37125
+        }
+      }
+    },
+    {
+      "id": "synthesis_tier",
+      "label": "Model tier (synthesis)",
+      "kind": "choice",
+      "options": [
+        "premium-reasoning",
+        "workhorse",
+        "small-fast"
+      ],
+      "default": "workhorse",
+      "description": "Writing the review memo. Structured, low-variance work \u2014 the safest stage to move down a tier.",
+      "affects": [
+        "cost",
+        "latency"
+      ],
+      "effects": {
+        "premium-reasoning": {
+          "cost": 1.176819,
+          "latency": 1.16712,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.789995
+        },
+        "workhorse": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        },
+        "small-fast": {
+          "cost": 0.967583,
+          "latency": 0.941556,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.649535
+        }
+      }
+    },
+    {
+      "id": "prompt_caching",
+      "label": "Prompt caching",
+      "kind": "toggle",
+      "options": [
+        true,
+        false
+      ],
+      "default": false,
+      "description": "Cache the shared contract preamble across sections and stages. Quality-neutral by construction: the tokens are identical.",
+      "affects": [
+        "cost"
+      ],
+      "effects": {
+        "True": {
+          "cost": 0.64472,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.432798
+        },
+        "False": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        }
+      }
+    },
+    {
+      "id": "top_k",
+      "label": "Retrieval top-k",
+      "kind": "choice",
+      "options": [
+        3,
+        6,
+        9,
+        12,
+        16
+      ],
+      "default": 12,
+      "description": "Supporting passages retrieved per section. Cutting this looks nearly free on the invoice and is not free on recall \u2014 the exact trap the naive-cheap configuration fell into.",
+      "affects": [
+        "cost",
+        "quality"
+      ],
+      "effects": {
+        "3": {
+          "cost": 0.851284,
+          "latency": 0.980895,
+          "quality": {
+            "citation_accuracy": -0.024787,
+            "clause_recall": -0.338562
+          },
+          "measured_cost_per_document_usd": 0.571464
+        },
+        "6": {
+          "cost": 0.900856,
+          "latency": 0.987273,
+          "quality": {
+            "citation_accuracy": -0.007712,
+            "clause_recall": -0.124533
+          },
+          "measured_cost_per_document_usd": 0.604742
+        },
+        "9": {
+          "cost": 0.950428,
+          "latency": 0.993646,
+          "quality": {
+            "citation_accuracy": -0.003212,
+            "clause_recall": -0.037254
+          },
+          "measured_cost_per_document_usd": 0.638019
+        },
+        "12": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        },
+        "16": {
+          "cost": 1.066096,
+          "latency": 1.008494,
+          "quality": {
+            "clause_recall": 0.014308
+          },
+          "measured_cost_per_document_usd": 0.715667
+        }
+      }
+    },
+    {
+      "id": "output_cap",
+      "label": "Output cap",
+      "kind": "choice",
+      "options": [
+        1200,
+        2000,
+        3000,
+        4000
+      ],
+      "default": 4000,
+      "description": "Maximum memo length. Below what long contracts need the memo truncates, and truncation is a floor with zero tolerance.",
+      "affects": [
+        "cost",
+        "quality"
+      ],
+      "effects": {
+        "1200": {
+          "cost": 0.990684,
+          "latency": 0.942202,
+          "quality": {
+            "truncation_rate": 0.541667
+          },
+          "measured_cost_per_document_usd": 0.665043
+        },
+        "2000": {
+          "cost": 0.997538,
+          "latency": 0.975317,
+          "quality": {
+            "truncation_rate": 0.208333
+          },
+          "measured_cost_per_document_usd": 0.669644
+        },
+        "3000": {
+          "cost": 0.999912,
+          "latency": 1.0,
+          "quality": {
+            "truncation_rate": 0.041667
+          },
+          "measured_cost_per_document_usd": 0.671238
+        },
+        "4000": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        }
+      }
+    },
+    {
+      "id": "batch_api",
+      "label": "Batch API for synthesis",
+      "kind": "toggle",
+      "options": [
+        true,
+        false
+      ],
+      "default": false,
+      "description": "Half price on the non-interactive stage at roughly three times its latency. Quality-neutral; what it threatens is the ceiling.",
+      "affects": [
+        "cost",
+        "latency"
+      ],
+      "effects": {
+        "True": {
+          "cost": 0.977898,
+          "latency": 1.240765,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.656459
+        },
+        "False": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        }
+      }
+    },
+    {
+      "id": "semantic_cache",
+      "label": "Semantic cache on retrieval",
+      "kind": "toggle",
+      "options": [
+        true,
+        false
+      ],
+      "default": false,
+      "description": "Reuse retrieval for documents already analysed. Saves very little here because embedding is a rounding error \u2014 measured, so we can say so.",
+      "affects": [
+        "cost"
+      ],
+      "effects": {
+        "True": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        },
+        "False": {
+          "cost": 1.0,
+          "latency": 1.0,
+          "quality": {},
+          "measured_cost_per_document_usd": 0.671297
+        }
+      }
+    }
+  ],
+  "note": "Each lever value was measured by running the full golden set with that one lever changed and everything else held at baseline. The simulator composes them multiplicatively, which assumes independence they do not have \u2014 that residual is why every simulated number is labelled projected."
+}

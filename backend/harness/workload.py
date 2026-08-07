@@ -112,7 +112,7 @@ OPTIMISED = Config(
     },
     prompt_cache=True,      # the shared contract preamble is cached across stages
     semantic_cache=True,    # repeat retrievals on re-analysed documents
-    top_k=11,
+    top_k=12,
     output_cap=4000,
     # Deliberately NOT batching: the batch lever is offered by the Module 4
     # simulator and gets flagged there for the latency ceiling.

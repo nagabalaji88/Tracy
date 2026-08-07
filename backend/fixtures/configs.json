@@ -23,7 +23,7 @@
     "label": "Optimised",
     "role": "candidate",
     "ablated_stage": null,
-    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"small-fast\"}, \"prompt_cache\": true, \"semantic_cache\": true, \"top_k\": 11, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"small-fast\"}, \"prompt_cache\": true, \"semantic_cache\": true, \"top_k\": 12, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
     "recorded_at": "2026-08-05T00:00:00+00:00"
   },
   {

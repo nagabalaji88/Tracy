@@ -353,13 +353,15 @@ export interface LeverCatalogue {
   levers: {
     id: string
     label: string
-    kind: string
-    options?: (string | number)[]
+    kind: 'toggle' | 'choice'
+    options?: (string | number | boolean)[]
     default: string | number | boolean
     description: string
     affects: string[]
   }[]
   base_config_id: string
+  baseline_levers: Record<string, string | number | boolean>
+  calibration: { provider: string; golden_set_size: number; note: string }
   measured_configs: Record<string, Record<string, unknown>>
 }
 
@@ -379,10 +381,13 @@ export interface Simulation {
     quality_estimate: Record<string, number>
     is_projection: true
   }
+  chosen_levers: Record<string, string | number | boolean>
+  monthly_documents_basis: number
   lever_effects: {
     id: string
     label: string
     value: string | number | boolean
+    is_baseline: boolean
     cost_multiplier: number
     latency_multiplier: number
     quality_effect: Record<string, number>
@@ -393,6 +398,7 @@ export interface Simulation {
     label: string
     floor: number
     projected_value: number
+    baseline_value: number
     breaches: boolean
     margin: number
   }[]
@@ -400,8 +406,10 @@ export interface Simulation {
   preflight: { blocked: boolean; reasons: string[] }
   measured_match: {
     config_id: string
+    label: string
     measured_cost_per_document_usd: number
     measured_quality: Record<string, number>
+    measured_latency_p95_ms: number
     decision: string
     projection_error_pct: number
   } | null
