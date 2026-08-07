@@ -1,0 +1,63 @@
+# =============================================================================
+# policy.yaml — the framework's public contract.
+#
+# Onboarding a second workload means adding an entry here and implementing the
+# two adapter protocols (CostMeter, Scorer). It never means editing the core.
+#
+# `metrics` declares the direction of every quality metric referenced by a
+# quality_floor. Without a declared direction the engine FAILS LOUDLY rather
+# than guessing whether higher or lower is better.
+# =============================================================================
+
+metrics:
+  clause_recall:        { direction: higher_is_better, label: "Clause recall" }
+  citation_accuracy:    { direction: higher_is_better, label: "Citation accuracy" }
+  truncation_rate:      { direction: lower_is_better,  label: "Truncation rate" }
+  hallucinated_clauses: { direction: lower_is_better,  label: "Hallucinated clauses / doc" }
+  extraction_f1:        { direction: higher_is_better, label: "Extraction F1" }
+
+# Rework is part of the numerator of cost-per-successful-outcome.
+economics:
+  human_rework_hourly_rate_usd: 95.0
+  currency: USD
+
+# Statistical gate applied to every paired baseline-vs-candidate comparison.
+significance:
+  bootstrap_iterations: 2000
+  confidence: 0.95
+  seed: 20260807
+
+use_cases:
+  contract_analysis:
+    label: "Contract analysis (4-stage document pipeline)"
+    quality_floor:
+      clause_recall: 0.92
+      truncation_rate: 0.0
+    latency_ceiling_ms: 45000
+    monthly_budget_usd: 400
+    degradation_ladder:
+      - { at_pct: 80,  action: route_cheapest_above_floor }
+      - { at_pct: 95,  action: queue_to_batch }
+      - { at_pct: 100, action: reject_with_reason }
+    circuit_breakers:
+      max_usd_per_trace: 5.00
+      max_spend_velocity_multiplier: 3.0
+      max_agent_depth: 8
+      max_identical_calls: 3
+
+  # Second use case, present to prove the onboarding claim: a policy entry plus
+  # two adapter implementations, no core changes.
+  support_triage:
+    label: "Support ticket triage"
+    quality_floor:
+      extraction_f1: 0.85
+    latency_ceiling_ms: 8000
+    monthly_budget_usd: 120
+    degradation_ladder:
+      - { at_pct: 85,  action: route_cheapest_above_floor }
+      - { at_pct: 100, action: reject_with_reason }
+    circuit_breakers:
+      max_usd_per_trace: 0.50
+      max_spend_velocity_multiplier: 4.0
+      max_agent_depth: 4
+      max_identical_calls: 3

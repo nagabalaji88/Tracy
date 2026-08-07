@@ -1,0 +1,45 @@
+# =============================================================================
+# pricing.yaml — USD per 1,000,000 tokens, by model.
+#
+# This is CONFIGURATION, not measurement. The cost of a recorded run is
+# token_counts x these rates; the token counts themselves come from the
+# recorded runs. Verify the rates against your provider's current price list
+# before quoting any absolute dollar figure externally.
+#
+# `cached_input` is the discounted rate for prompt-cache reads.
+# `reasoning` output is billed at the output rate unless stated otherwise.
+# `batch_multiplier` is applied to the whole call when submitted via a batch API.
+# =============================================================================
+
+models:
+  premium-reasoning:
+    label: "Premium reasoning tier"
+    fresh_input: 15.00
+    cached_input: 1.50
+    output: 75.00
+    reasoning: 75.00
+    batch_multiplier: 0.5
+
+  workhorse:
+    label: "Mid / workhorse tier"
+    fresh_input: 3.00
+    cached_input: 0.30
+    output: 15.00
+    reasoning: 15.00
+    batch_multiplier: 0.5
+
+  small-fast:
+    label: "Small / fast tier"
+    fresh_input: 0.80
+    cached_input: 0.08
+    output: 4.00
+    reasoning: 4.00
+    batch_multiplier: 0.5
+
+  embedding-small:
+    label: "Embedding model"
+    fresh_input: 0.02
+    cached_input: 0.02
+    output: 0.0
+    reasoning: 0.0
+    batch_multiplier: 1.0

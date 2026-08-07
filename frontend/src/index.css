@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+/* Light-first, restrained. Numbers are the hero; the chrome gets out of the way. */
+:root {
+  --ink: #0f172a;
+  --ink-soft: #475569;
+  --ink-faint: #94a3b8;
+  --line: #e2e8f0;
+  --surface: #ffffff;
+  --canvas: #f6f7f9;
+  --accent: #1d4ed8;
+  --pass: #047857;
+  --pass-bg: #ecfdf5;
+  --fail: #b91c1c;
+  --fail-bg: #fef2f2;
+  --warn: #b45309;
+  --warn-bg: #fffbeb;
+  --projected: #7c3aed;
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1100px 520px at 88% -12%, #eef2ff 0%, transparent 60%),
+    radial-gradient(900px 460px at -8% 0%, #f0fdfa 0%, transparent 55%),
+    var(--canvas);
+  color: var(--ink);
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv05' 1, 'ss01' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -18px rgb(15 23 42 / 0.30);
+}
+
+.hairline { border-color: var(--line); }
+
+/* Scrollbars stay quiet. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #d7dce3; border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-track { background: transparent; }
