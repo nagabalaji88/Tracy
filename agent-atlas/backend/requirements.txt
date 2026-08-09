@@ -1,0 +1,5 @@
+fastapi>=0.115
+uvicorn[standard]>=0.32
+httpx>=0.27
+# Optional: only needed to run ATLAS against a live model.
+# anthropic>=0.40

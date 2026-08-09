@@ -1,0 +1,65 @@
+[
+  {
+    "config_id": "baseline_v1",
+    "use_case": "contract_analysis",
+    "label": "Baseline",
+    "role": "baseline",
+    "ablated_stage": null,
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"workhorse\"}, \"prompt_cache\": false, \"semantic_cache\": false, \"top_k\": 12, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  },
+  {
+    "config_id": "naive_cheap_v1",
+    "use_case": "contract_analysis",
+    "label": "Naive-cheap",
+    "role": "candidate",
+    "ablated_stage": null,
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"small-fast\", \"synthesize\": \"small-fast\"}, \"prompt_cache\": false, \"semantic_cache\": false, \"top_k\": 3, \"output_cap\": 1200, \"batch_stages\": [], \"reasoning\": false}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  },
+  {
+    "config_id": "optimised_v1",
+    "use_case": "contract_analysis",
+    "label": "Optimised",
+    "role": "candidate",
+    "ablated_stage": null,
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"small-fast\"}, \"prompt_cache\": true, \"semantic_cache\": true, \"top_k\": 12, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  },
+  {
+    "config_id": "ablate_retrieve",
+    "use_case": "contract_analysis",
+    "label": "Baseline minus retrieve",
+    "role": "ablation",
+    "ablated_stage": "retrieve",
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"workhorse\"}, \"prompt_cache\": false, \"semantic_cache\": false, \"top_k\": 12, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  },
+  {
+    "config_id": "ablate_risk_assess",
+    "use_case": "contract_analysis",
+    "label": "Baseline minus risk_assess",
+    "role": "ablation",
+    "ablated_stage": "risk_assess",
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"workhorse\"}, \"prompt_cache\": false, \"semantic_cache\": false, \"top_k\": 12, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  },
+  {
+    "config_id": "ablate_synthesize",
+    "use_case": "contract_analysis",
+    "label": "Baseline minus synthesize",
+    "role": "ablation",
+    "ablated_stage": "synthesize",
+    "levers": "{\"prompt_version\": \"cv-2026-06-14\", \"model_by_stage\": {\"retrieve\": \"embedding-small\", \"clause_extract\": \"workhorse\", \"risk_assess\": \"premium-reasoning\", \"synthesize\": \"workhorse\"}, \"prompt_cache\": false, \"semantic_cache\": false, \"top_k\": 12, \"output_cap\": 4000, \"batch_stages\": [], \"reasoning\": true}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  },
+  {
+    "config_id": "triage_baseline_v1",
+    "use_case": "support_triage",
+    "label": "Triage baseline",
+    "role": "baseline",
+    "ablated_stage": null,
+    "levers": "{\"model_by_stage\": {\"triage\": \"small-fast\"}}",
+    "recorded_at": "2026-08-05T00:00:00+00:00"
+  }
+]

@@ -1,0 +1,8 @@
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+pyyaml>=6.0
+pytest>=8.0
+httpx>=0.27
+# Optional: only needed to re-record runs against a live model.
+# anthropic>=0.40
