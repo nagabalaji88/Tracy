@@ -140,7 +140,7 @@ function KpiTile({ label, value, sub, tone = 'default', to }: {
 }) {
   const color = { default: 'var(--ink)', pass: 'var(--pass)', fail: 'var(--fail)', warn: 'var(--warn)' }[tone]
   return (
-    <Link to={to} className="glass block p-5 transition-shadow hover:shadow-md">
+    <Link to={to} className="glass block p-5 lift">
       <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">{label}</div>
       <div className="mt-1 text-3xl font-semibold" style={{ color }}>
         <Counter value={value} format={(v) => usd(v, 0)} />
@@ -154,7 +154,7 @@ function NavCard({ to, tag, title, body }: {
   to: string; tag: string; title: string; body: string
 }) {
   return (
-    <Link to={to} className="glass block p-5 transition-shadow hover:shadow-md">
+    <Link to={to} className="glass block p-5 lift">
       <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">{tag}</div>
       <div className="mt-1 text-[15px] font-semibold">{title}</div>
       <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">{body}</p>

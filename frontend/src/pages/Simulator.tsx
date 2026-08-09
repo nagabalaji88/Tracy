@@ -77,7 +77,7 @@ export function Simulator() {
                       <button key={String(opt)}
                         onClick={() => setChosen((c) => ({ ...c, [lever.id]: opt as LeverValue }))}
                         className={`rounded-lg px-2.5 py-1 text-xs transition-colors ${
-                          active ? 'bg-slate-900 text-white'
+                          active ? 'bg-[var(--accent)] text-white shadow-[var(--shadow-accent)]'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}>
                         {lever.kind === 'toggle' ? (opt ? 'on' : 'off') : String(opt)}

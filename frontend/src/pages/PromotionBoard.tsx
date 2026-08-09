@@ -318,12 +318,12 @@ function MiniChart({ title, rows, dataKey, fmt }: {
       <div className="mb-2 text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">{title}</div>
       <ResponsiveContainer width="100%" height={190}>
         <BarChart data={rows} margin={{ top: 6, right: 6, bottom: 0, left: -14 }}>
-          <CartesianGrid vertical={false} stroke="#eef1f5" />
-          <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+          <CartesianGrid vertical={false} stroke="#f1f2fa" />
+          <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#767d9b' }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false} tickLine={false}
             tickFormatter={(v) => fmt(Number(v))} width={62} />
-          <Tooltip formatter={(v) => fmt(Number(v))} cursor={{ fill: '#0f172a08' }}
-            contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
+          <Tooltip formatter={(v) => fmt(Number(v))} cursor={{ fill: '#5546e80f' }}
+            contentStyle={{ borderRadius: 12, border: '1px solid #e6e8f4', fontSize: 12, boxShadow: '0 14px 34px -22px rgb(27 31 54 / 0.4)' }} />
           <RBar dataKey={dataKey} radius={[5, 5, 0, 0]} maxBarSize={54}>
             {rows.map((r, i) => (
               <Cell key={i} fill={r.rejected ? 'var(--fail)' : 'var(--accent)'} />

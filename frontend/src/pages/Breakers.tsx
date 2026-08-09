@@ -58,7 +58,7 @@ export function Breakers() {
   return (
     <div className="space-y-5">
       <motion.div
-        animate={tripped ? { borderColor: '#fca5a5' } : {}}
+        animate={tripped ? { borderColor: '#f7bfc6' } : {}}
         className={`glass p-6 ${tripped ? 'border-red-300' : ''}`}
       >
         <div className="flex flex-wrap items-start justify-between gap-5">
@@ -86,7 +86,7 @@ export function Breakers() {
               {playing ? 'Pause' : 'Play'}
             </button>
             <button onClick={replay}
-              className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs text-white hover:bg-slate-800">
+              className="rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white hover:bg-[var(--accent-hover)]">
               Replay
             </button>
           </div>
@@ -124,25 +124,25 @@ export function Breakers() {
             <ComposedChart data={chartRows} margin={{ top: 6, right: 10, bottom: 0, left: -12 }}>
               <defs>
                 <linearGradient id="burn" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#b91c1c" stopOpacity={0.22} />
-                  <stop offset="100%" stopColor="#b91c1c" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="#dc3545" stopOpacity={0.22} />
+                  <stop offset="100%" stopColor="#dc3545" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} stroke="#eef1f5" />
-              <XAxis dataKey="index" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false}
+              <CartesianGrid vertical={false} stroke="#f1f2fa" />
+              <XAxis dataKey="index" tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false}
                 tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+              <YAxis tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false} tickLine={false}
                 tickFormatter={(v) => usd(Number(v), 0)} width={58} />
               <Tooltip formatter={(v) => usd(Number(v), 2)}
                 labelFormatter={(l) => `span ${l}`}
-                contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
-              <Area type="monotone" dataKey="unchecked" stroke="#b91c1c" strokeWidth={1}
+                contentStyle={{ borderRadius: 12, border: '1px solid #e6e8f4', fontSize: 12, boxShadow: '0 14px 34px -22px rgb(27 31 54 / 0.4)' }} />
+              <Area type="monotone" dataKey="unchecked" stroke="#dc3545" strokeWidth={1}
                 strokeDasharray="4 3" fill="url(#burn)" name="if unchecked" />
-              <Line type="monotone" dataKey="executed" stroke="#0f172a" strokeWidth={2.4}
+              <Line type="monotone" dataKey="executed" stroke="#1b1f36" strokeWidth={2.4}
                 dot={false} name="executed" />
               {data.trip && (
-                <ReferenceLine x={data.trip.index} stroke="#b91c1c" strokeWidth={1.5}
-                  label={{ value: 'breaker', position: 'top', fontSize: 10, fill: '#b91c1c' }} />
+                <ReferenceLine x={data.trip.index} stroke="#dc3545" strokeWidth={1.5}
+                  label={{ value: 'breaker', position: 'top', fontSize: 10, fill: '#dc3545' }} />
               )}
             </ComposedChart>
           </ResponsiveContainer>

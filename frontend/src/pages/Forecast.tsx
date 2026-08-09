@@ -95,29 +95,29 @@ function HistoryChart({ f }: { f: Forecast }) {
         <ComposedChart data={rows} margin={{ top: 8, right: 12, bottom: 0, left: -16 }}>
           <defs>
             <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.20} />
-              <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.02} />
+              <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.20} />
+              <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} stroke="#eef1f5" />
-          <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false}
+          <CartesianGrid vertical={false} stroke="#f1f2fa" />
+          <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false}
             tickLine={false} tickFormatter={shortDate} minTickGap={26} />
-          <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+          <YAxis tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false} tickLine={false}
             tickFormatter={(v) => usd(Number(v), 0)} width={58} />
           <Tooltip
             formatter={(v, n) => [usd(Number(v)), String(n)]}
             labelFormatter={(l) => shortDate(String(l))}
-            contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
+            contentStyle={{ borderRadius: 12, border: '1px solid #e6e8f4', fontSize: 12, boxShadow: '0 14px 34px -22px rgb(27 31 54 / 0.4)' }} />
           <Area type="monotone" dataKey="p95" stroke="none" fill="url(#band)" name="p95" />
-          <Line type="monotone" dataKey="p50" stroke="#7c3aed" strokeWidth={2} dot={false}
+          <Line type="monotone" dataKey="p50" stroke="#8b5cf6" strokeWidth={2} dot={false}
             strokeDasharray="5 4" name="p50 projection" />
-          <Line type="monotone" dataKey="actual" stroke="#1d4ed8" strokeWidth={2} dot={false}
+          <Line type="monotone" dataKey="actual" stroke="#5546e8" strokeWidth={2} dot={false}
             name="recorded" />
           {f.change_points.map((c) => (
-            <ReferenceLine key={c.date} x={c.date} stroke="#c2410c" strokeDasharray="3 3"
+            <ReferenceLine key={c.date} x={c.date} stroke="#d9820a" strokeDasharray="3 3"
               label={{
                 value: c.prompt_version.replace('cv-', ''),
-                position: 'insideTopRight', fontSize: 9, fill: '#c2410c',
+                position: 'insideTopRight', fontSize: 9, fill: '#d9820a',
               }} />
           ))}
         </ComposedChart>
@@ -202,7 +202,7 @@ function GovernorCard({ g, includeIncidents, onToggle }: {
           ].map((o) => (
             <button key={String(o.v)} onClick={() => onToggle(o.v)}
               className={`rounded-lg px-2.5 py-1 text-xs transition-colors ${
-                includeIncidents === o.v ? 'bg-slate-900 text-white'
+                includeIncidents === o.v ? 'bg-[var(--accent)] text-white shadow-[var(--shadow-accent)]'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}>
               {o.label}

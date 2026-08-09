@@ -24,7 +24,7 @@ const DIMENSIONS = [
   { key: 'by_use_case', label: 'Use case' },
 ] as const
 
-const PALETTE = ['#1d4ed8', '#0891b2', '#7c3aed', '#c2410c', '#047857', '#be123c']
+const PALETTE = ['#5546e8', '#2f8bf0', '#8b5cf6', '#f59e0b', '#10b981', '#f43f5e']
 
 export function Explorer() {
   const useCase = useApp((s) => s.useCase)
@@ -119,7 +119,7 @@ function CacheCard({ attribution }: { attribution: Attribution }) {
               {data.map((_, i) => <Cell key={i} fill={PALETTE[i]} />)}
             </Pie>
             <Tooltip formatter={(v) => usd(Number(v))}
-              contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
+              contentStyle={{ borderRadius: 12, border: '1px solid #e6e8f4', fontSize: 12, boxShadow: '0 14px 34px -22px rgb(27 31 54 / 0.4)' }} />
             <Legend verticalAlign="bottom" height={24} iconSize={8}
               formatter={(v) => <span className="text-[11px] text-slate-500">{v}</span>} />
           </PieChart>
@@ -164,7 +164,7 @@ function Rollups({ attribution }: { attribution: Attribution }) {
           {DIMENSIONS.map((d) => (
             <button key={d.key} onClick={() => setDim(d.key)}
               className={`rounded-lg px-2.5 py-1 text-xs transition-colors ${
-                dim === d.key ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                dim === d.key ? 'bg-[var(--accent)] text-white shadow-[var(--shadow-accent)]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}>
               {d.label}
             </button>
@@ -174,13 +174,13 @@ function Rollups({ attribution }: { attribution: Attribution }) {
       <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
         <ResponsiveContainer width="100%" height={Math.max(180, rows.length * 34)}>
           <BarChart data={rows} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
-            <CartesianGrid horizontal={false} stroke="#eef1f5" />
-            <XAxis type="number" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false}
+            <CartesianGrid horizontal={false} stroke="#f1f2fa" />
+            <XAxis type="number" tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false}
               tickLine={false} tickFormatter={(v) => usd(Number(v), 0)} />
-            <YAxis type="category" dataKey="key" width={130} tick={{ fontSize: 11, fill: '#475569' }}
+            <YAxis type="category" dataKey="key" width={130} tick={{ fontSize: 11, fill: '#5a6079' }}
               axisLine={false} tickLine={false} />
-            <Tooltip formatter={(v) => usd(Number(v))} cursor={{ fill: '#0f172a08' }}
-              contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
+            <Tooltip formatter={(v) => usd(Number(v))} cursor={{ fill: '#5546e80f' }}
+              contentStyle={{ borderRadius: 12, border: '1px solid #e6e8f4', fontSize: 12, boxShadow: '0 14px 34px -22px rgb(27 31 54 / 0.4)' }} />
             <Bar dataKey="spend_usd" radius={[0, 5, 5, 0]} maxBarSize={22}>
               {rows.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
             </Bar>
@@ -271,12 +271,12 @@ function HeavyTailCard({ data }: { data: HeavyTail }) {
         <div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={bars} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
-              <CartesianGrid vertical={false} stroke="#eef1f5" />
-              <XAxis dataKey="label" tick={{ fontSize: 9, fill: '#94a3b8' }} axisLine={false}
+              <CartesianGrid vertical={false} stroke="#f1f2fa" />
+              <XAxis dataKey="label" tick={{ fontSize: 9, fill: '#9ba2be' }} axisLine={false}
                 tickLine={false} interval={2} />
-              <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <Tooltip cursor={{ fill: '#0f172a08' }}
-                contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 10, fill: '#9ba2be' }} axisLine={false} tickLine={false} />
+              <Tooltip cursor={{ fill: '#5546e80f' }}
+                contentStyle={{ borderRadius: 12, border: '1px solid #e6e8f4', fontSize: 12, boxShadow: '0 14px 34px -22px rgb(27 31 54 / 0.4)' }} />
               <Bar dataKey="documents" radius={[4, 4, 0, 0]}>
                 {bars.map((_, i) => (
                   <Cell key={i} fill={i === overflowIndex ? 'var(--fail)' : 'var(--accent)'} />
