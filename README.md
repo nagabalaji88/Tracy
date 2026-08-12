@@ -40,6 +40,18 @@ Three things a judge should be able to read off that table:
 
 ## Run it
 
+On Windows, `run-demo.bat` does all of the below in one step — creates the venv,
+installs both Python and Node dependency sets, runs the tests, seeds ATLAS, and
+starts all four services. Requires Python 3.11+ (3.13 verified) and Node 18+.
+
+```bat
+run-demo.bat                 :: everything
+run-demo.bat /noatlas        :: control plane only
+run-demo.bat /setuponly      :: install, don't start
+```
+
+By hand, on any platform:
+
 ```bash
 # backend  (http://127.0.0.1:8000, docs at /docs)
 cd backend
